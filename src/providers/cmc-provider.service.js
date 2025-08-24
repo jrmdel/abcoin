@@ -23,12 +23,11 @@ export class CmcProviderService {
         {
           params: {
             start: 1,
-            limit: 5,
-            // convert: "USD",
+            limit: 100,
           },
         }
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       console.error("Error fetching cryptocurrency listings:", error);
       throw error;
