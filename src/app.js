@@ -7,7 +7,7 @@ async function startApp() {
     await dbConnector.connect();
     await main();
   } catch (error) {
-    console.error("Failed to connect to the database:", error);
+    console.error("An error occurred while running the app:", error);
   } finally {
     await dbConnector.disconnect();
   }
