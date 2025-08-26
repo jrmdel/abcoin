@@ -1,0 +1,11 @@
+services:
+  abcoin:
+    image: dj/abcoin:${ABCOIN_TAG}
+    container_name: abcoin
+    restart: always
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    external: true
