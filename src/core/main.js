@@ -6,6 +6,7 @@ import { CmcProviderService } from "../providers/cmc-provider.service.js";
 
 const FOLLOWED_SYMBOLS = ["BTC", "ETH", "ADA", "SOL", "AVAX", "XTZ", "BNB"];
 const THRESHOLD_PERCENTAGE = 5;
+const discordClient = new DiscordClient();
 
 async function checkSignificantChanges(listings, repository) {
   const results = [];
@@ -34,6 +35,13 @@ async function checkSignificantChangesForNPreviousListings(listings, repository,
   return results;
 }
 
+function sendNotificationIfNeeded(results) {
+  const message = formatChangeResults(results);
+  if (message) {
+    discordClient.sendNotification(message);
+  }
+}
+
 function formatChangeResults(results) {
   const groupedBySymbol = results
     .sort((a, b) => a.symbol.localeCompare(b.symbol) || a.hourPeriod - b.hourPeriod)
@@ -58,12 +66,14 @@ function formatChangeResults(results) {
       .join("\n");
     return `**${symbol}**: $${cleanPrice}\n${lines}`;
   });
+  if (linesList.length === 0) {
+    return null;
+  }
   linesList.unshift("🚨 Significant price changes detected:\n");
   return linesList.join("\n");
 }
 
 export async function main() {
-  const discordClient = new DiscordClient();
   const db = dbConnector.getDb();
   const repository = new CoinHistoryRepository(db);
   const cmcProvider = new CmcProviderService();
@@ -74,6 +84,6 @@ export async function main() {
     .filter((listing) => FOLLOWED_SYMBOLS.includes(listing.symbol));
 
   const results = await checkSignificantChanges(listings, repository);
-  await discordClient.sendNotification(formatChangeResults(results));
+  sendNotificationIfNeeded(results);
   await repository.saveListings(listings);
 }

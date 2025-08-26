@@ -1,6 +1,8 @@
 import { Client, GatewayIntentBits } from "discord.js";
 
 export class DiscordClient {
+  readyPromise;
+
   constructor() {
     const token = process.env.DISCORD_TOKEN;
     const channelId = process.env.DISCORD_CHANNEL_ID;
@@ -21,17 +23,24 @@ export class DiscordClient {
   }
 
   #initClient() {
-    return new Promise((resolve) => {
-      this.client.once("ready", () => {
+    if (this.readyPromise) {
+      return this.readyPromise;
+    }
+
+    this.readyPromise = new Promise((resolve) => {
+      this.client.once("ready", async () => {
         console.log(`✅ Discord bot logged in as ${this.client.user?.tag}`);
         resolve();
       });
       this.client.login(this.token);
     });
+
+    return this.readyPromise;
   }
 
   async sendNotification(content) {
     try {
+      await this.#initClient();
       const channel = await this.client.channels.fetch(this.channelId);
       await channel.send({ content });
     } catch (error) {
