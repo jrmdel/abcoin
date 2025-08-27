@@ -12,6 +12,5 @@ export async function generateReport() {
     const listings = await historyRepository.getLastListings(symbols);
     sendReportNotificationIfNeeded(listings);
   }
-  // Placeholder for report generation logic
   console.log("Report generated.");
 }
