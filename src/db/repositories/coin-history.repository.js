@@ -33,6 +33,26 @@ export class CoinHistoryRepository {
     }
   }
 
+  async getHistoricalPrice(symbol, hours) {
+    try {
+      const sinceDate = new Date(Date.now() - hours * 60 * 60 * 1000);
+      const result = await this.collection.findOne(
+        {
+          "metadata.symbol": symbol,
+          date: { $gte: sinceDate },
+        },
+        {
+          sort: { date: 1 },
+          projection: { "metadata.price": 1, _id: 0 },
+        }
+      );
+      return result?.metadata.price || null;
+    } catch (error) {
+      console.error(`Error retrieving historical price for symbol ${symbol}:`, error);
+      throw error;
+    }
+  }
+
   async getLastListings(symbols) {
     try {
       const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();

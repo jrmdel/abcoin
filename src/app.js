@@ -2,7 +2,8 @@ import "dotenv/config";
 import { dbConnector } from "./db/connector.js";
 import { schedule } from "node-cron";
 import { generateReport } from "./core/instant-report.js";
-import { main } from "./core/main.js";
+import { generateLiveAlert } from "./core/check-changes.js";
+import { sendDeploymentNotification } from "./core/notifications.js";
 
 async function startDb() {
   try {
@@ -15,7 +16,7 @@ async function startDb() {
 // Schedule the job to run every hour at minute 0
 schedule("0 * * * *", () => {
   console.log("Running scheduled job at", new Date().toISOString());
-  main().catch((error) => {
+  generateLiveAlert().catch((error) => {
     console.error("An error occurred while checking for significant changes:", error);
   });
 });
@@ -30,4 +31,8 @@ schedule("0 12 * * 1", async () => {
   }
 });
 
-startDb();
+startDb().then(() => {
+  sendDeploymentNotification().catch((error) => {
+    console.error("An error occurred while sending deployment notification:", error);
+  });
+});
