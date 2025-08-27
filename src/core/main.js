@@ -1,12 +1,10 @@
-import { dbConnector } from "../db/connector.js";
 import { CoinHistoryRepository } from "../db/repositories/coin-history.repository.js";
 import { extractAmountFromListing, isSignificantChange } from "../functions/crypto.tools.js";
-import { DiscordClient } from "../lib/discord-client.js";
+import { discordClient } from "../lib/discord-client.js";
 import { CmcProviderService } from "../providers/cmc-provider.service.js";
 
-const FOLLOWED_SYMBOLS = ["BTC", "ETH", "ADA", "SOL", "AVAX", "XTZ", "BNB"];
+const FOLLOWED_SYMBOLS = ["ADA", "AVAX", "BNB", "BTC", "ETH", "SOL", "XTZ"];
 const THRESHOLD_PERCENTAGE = 5;
-const discordClient = new DiscordClient();
 
 async function checkSignificantChanges(listings, repository) {
   const results = [];
@@ -74,8 +72,7 @@ function formatChangeResults(results) {
 }
 
 export async function main() {
-  const db = dbConnector.getDb();
-  const repository = new CoinHistoryRepository(db);
+  const repository = new CoinHistoryRepository();
   const cmcProvider = new CmcProviderService();
 
   const rawListings = await cmcProvider.getCryptocurrencyListings();

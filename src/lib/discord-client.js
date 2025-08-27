@@ -1,6 +1,6 @@
 import { Client, GatewayIntentBits } from "discord.js";
 
-export class DiscordClient {
+class DiscordClient {
   readyPromise;
 
   constructor() {
@@ -28,7 +28,7 @@ export class DiscordClient {
     }
 
     this.readyPromise = new Promise((resolve) => {
-      this.client.once("ready", async () => {
+      this.client.once("clientReady", async () => {
         console.log(`✅ Discord bot logged in as ${this.client.user?.tag}`);
         resolve();
       });
@@ -48,3 +48,5 @@ export class DiscordClient {
     }
   }
 }
+
+export const discordClient = new DiscordClient();
