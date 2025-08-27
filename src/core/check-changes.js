@@ -1,7 +1,7 @@
 import { CoinHistoryRepository } from "../db/repositories/coin-history.repository.js";
 import { extractAmountFromListing, isSignificantChange } from "../functions/crypto.tools.js";
-import { discordClient } from "../lib/discord-client.js";
 import { CmcProviderService } from "../providers/cmc-provider.service.js";
+import { sendLiveAlertNotificationIfNeeded } from "./notifications.js";
 
 const FOLLOWED_SYMBOLS = ["ADA", "AVAX", "BNB", "BTC", "ETH", "SOL", "XTZ"];
 const THRESHOLD_SETTINGS = [
@@ -37,44 +37,6 @@ async function checkSignificantChangesOnGivenPeriod(listings, repository, { hour
   return results;
 }
 
-function sendNotificationIfNeeded(results) {
-  const message = formatChangeResults(results);
-  if (message) {
-    discordClient.sendNotification(message);
-  }
-}
-
-function formatChangeResults(results) {
-  const groupedBySymbol = results
-    .sort((a, b) => a.symbol.localeCompare(b.symbol) || a.hourPeriod - b.hourPeriod)
-    .reduce((acc, { symbol, price, ...rest }) => {
-      if (!acc[symbol]) {
-        acc[symbol] = { changes: [] };
-      }
-      acc[symbol].price = price;
-      acc[symbol].changes.push(rest);
-      return acc;
-    }, {});
-
-  const linesList = Object.entries(groupedBySymbol).map(([symbol, { price, changes }]) => {
-    const cleanPrice = price.toFixed(4);
-    const lines = changes
-      .map((change) => {
-        const variation = cleanPrice > change.oldPrice ? "📈" : "📉";
-        const mean = change.oldPrice.toFixed(4);
-        const percentage = (((cleanPrice - mean) / mean) * 100).toFixed(2);
-        return `- -${change.hourPeriod}h : ${percentage}% ${variation} (mean $${mean})`;
-      })
-      .join("\n");
-    return `**${symbol}**: $${cleanPrice}\n${lines}`;
-  });
-  if (linesList.length === 0) {
-    return null;
-  }
-  linesList.unshift("🚨 Significant price changes detected:\n");
-  return linesList.join("\n");
-}
-
 export async function generateLiveAlert() {
   const repository = new CoinHistoryRepository();
   const cmcProvider = new CmcProviderService();
@@ -85,6 +47,6 @@ export async function generateLiveAlert() {
     .filter((listing) => FOLLOWED_SYMBOLS.includes(listing.symbol));
 
   const results = await checkSignificantChanges(listings, repository);
-  sendNotificationIfNeeded(results);
+  sendLiveAlertNotificationIfNeeded(results);
   await repository.saveListings(listings);
 }
