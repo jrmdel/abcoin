@@ -3,6 +3,7 @@ import { dbConnector } from "./db/connector.js";
 import { schedule } from "node-cron";
 import { generateReport } from "./core/instant-report.js";
 import { generateLiveAlert } from "./core/check-changes.js";
+import { sendDeploymentNotification } from "./core/notifications.js";
 
 async function startDb() {
   try {
@@ -30,4 +31,8 @@ schedule("0 12 * * 1", async () => {
   }
 });
 
-startDb();
+startDb().then(() => {
+  sendDeploymentNotification().catch((error) => {
+    console.error("An error occurred while sending deployment notification:", error);
+  });
+});
