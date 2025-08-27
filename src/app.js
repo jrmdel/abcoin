@@ -2,7 +2,7 @@ import "dotenv/config";
 import { dbConnector } from "./db/connector.js";
 import { schedule } from "node-cron";
 import { generateReport } from "./core/instant-report.js";
-import { main } from "./core/main.js";
+import { main } from "./core/check-changes.js";
 
 async function startDb() {
   try {
