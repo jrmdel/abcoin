@@ -4,30 +4,34 @@ import { discordClient } from "../lib/discord-client.js";
 import { CmcProviderService } from "../providers/cmc-provider.service.js";
 
 const FOLLOWED_SYMBOLS = ["ADA", "AVAX", "BNB", "BTC", "ETH", "SOL", "XTZ"];
-const THRESHOLD_PERCENTAGE = 5;
+const THRESHOLD_SETTINGS = [
+  { hours: 1, percentage: 3 },
+  { hours: 24, percentage: 5 },
+  { hours: 84, percentage: 10 },
+];
 
 async function checkSignificantChanges(listings, repository) {
   const results = [];
-  for (const count of [1, 12]) {
-    const result = await checkSignificantChangesForNPreviousListings(listings, repository, count);
+  for (const settings of THRESHOLD_SETTINGS) {
+    const result = await checkSignificantChangesOnGivenPeriod(listings, repository, settings);
     results.push(...result);
   }
   return results;
 }
 
-async function checkSignificantChangesForNPreviousListings(listings, repository, n) {
+async function checkSignificantChangesOnGivenPeriod(listings, repository, { hours, percentage }) {
   const results = [];
   for (const listing of listings) {
-    const meanPrice = await repository.getNPreviousListingsMeanPrice(n, listing.symbol);
-    if (meanPrice === null) {
+    const oldPrice = await repository.getHistoricalPrice(listing.symbol, hours);
+    if (oldPrice === null) {
       continue;
     }
-    const isSignificant = isSignificantChange(meanPrice, listing.price, THRESHOLD_PERCENTAGE);
+    const isSignificant = isSignificantChange(oldPrice, listing.price, percentage);
     if (isSignificant) {
       console.log(
-        `Significant change detected for ${listing.symbol}: from mean ${meanPrice} (last ${n} values) to ${listing.price}`
+        `Significant change detected for ${listing.symbol}: from ${oldPrice} (${hours}h ago) to ${listing.price}`
       );
-      results.push({ symbol: listing.symbol, price: listing.price, meanPrice, hourPeriod: n });
+      results.push({ symbol: listing.symbol, price: listing.price, oldPrice, hourPeriod: hours });
     }
   }
   return results;
@@ -56,8 +60,8 @@ function formatChangeResults(results) {
     const cleanPrice = price.toFixed(4);
     const lines = changes
       .map((change) => {
-        const variation = cleanPrice > change.meanPrice ? "📈" : "📉";
-        const mean = change.meanPrice.toFixed(4);
+        const variation = cleanPrice > change.oldPrice ? "📈" : "📉";
+        const mean = change.oldPrice.toFixed(4);
         const percentage = (((cleanPrice - mean) / mean) * 100).toFixed(2);
         return `- -${change.hourPeriod}h : ${percentage}% ${variation} (mean $${mean})`;
       })
@@ -71,7 +75,7 @@ function formatChangeResults(results) {
   return linesList.join("\n");
 }
 
-export async function main() {
+export async function generateLiveAlert() {
   const repository = new CoinHistoryRepository();
   const cmcProvider = new CmcProviderService();
 
