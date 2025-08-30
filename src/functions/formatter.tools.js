@@ -11,7 +11,7 @@ export function formatReportMessage(listings) {
     const weeklyChange = (listing.percentChange7d || 0).toFixed(2);
 
     const line = [
-      `**🪙 ${listing.symbol}** - $${listing.price.toFixed(4)}`,
+      `**🪙 ${listing.symbol}** - $${formatPrice(listing.price)}`,
       `- 24h Change: ${dailyChange}% ${dailyChange >= 0 ? "🟢" : "🔴"}`,
       `- 7d Change: ${weeklyChange}% ${weeklyChange >= 0 ? "🟢" : "🔴"}\n`,
     ];
@@ -22,6 +22,20 @@ export function formatReportMessage(listings) {
   return lines.join("\n");
 }
 
+function formatPrice(price) {
+  if (price >= 1000) {
+    // Rounding for large prices and add a space as thousand separator
+    return Math.round(price)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  } else if (price > 0) {
+    return price.toFixed(2);
+  } else if (price < 0.001) {
+    return price.toExponential(4);
+  }
+  return price.toFixed(4);
+}
+
 export function formatChangeResults(results) {
   const groupedBySymbol = results
     .sort((a, b) => a.symbol.localeCompare(b.symbol) || a.hourPeriod - b.hourPeriod)
@@ -29,22 +43,21 @@ export function formatChangeResults(results) {
       if (!acc[symbol]) {
         acc[symbol] = { changes: [] };
       }
-      acc[symbol].price = price;
+      acc[symbol].price = formatPrice(price);
       acc[symbol].changes.push(rest);
       return acc;
     }, {});
 
   const linesList = Object.entries(groupedBySymbol).map(([symbol, { price, changes }]) => {
-    const cleanPrice = price.toFixed(4);
     const lines = changes
       .map((change) => {
-        const variation = cleanPrice > change.oldPrice ? "📈" : "📉";
-        const mean = change.oldPrice.toFixed(4);
-        const percentage = (((cleanPrice - mean) / mean) * 100).toFixed(2);
-        return `- -${change.hourPeriod}h : ${percentage}% ${variation} (mean $${mean})`;
+        const oldPrice = formatPrice(change.oldPrice);
+        const variation = price > oldPrice ? "📈" : "📉";
+        const percentage = (((price - oldPrice) / oldPrice) * 100).toFixed(2);
+        return `- ${change.hourPeriod}h: ${percentage}% ${variation} (old price $${oldPrice})`;
       })
       .join("\n");
-    return `**${symbol}**: $${cleanPrice}\n${lines}`;
+    return `**${symbol}**: $${price}\n${lines}`;
   });
   if (linesList.length === 0) {
     return null;
