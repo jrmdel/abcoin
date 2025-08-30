@@ -1,12 +1,19 @@
-import js from "@eslint/js";
-import globals from "globals";
-import { defineConfig } from "eslint/config";
+import js from '@eslint/js';
+import globals from 'globals';
+import { defineConfig } from 'eslint/config';
+import { configs } from 'typescript-eslint';
+import prettier from 'eslint-config-prettier';
 
 export default defineConfig([
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
+    files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
     plugins: { js },
-    extends: ["js/recommended"],
+    extends: ['js/recommended'],
     languageOptions: { globals: globals.node },
+    rules: {
+      quotes: ['error', 'single', { avoidEscape: true }],
+    },
   },
+  configs.recommended,
+  prettier,
 ]);

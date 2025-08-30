@@ -1,9 +1,9 @@
-import { dbConnector } from "../connector";
+import { dbConnector } from '../connector.js';
 
 export class SettingsRepository {
   constructor() {
     const db = dbConnector.getDb();
-    this.collection = db.collection("settings");
+    this.collection = db.collection('settings');
   }
 
   getSettings() {

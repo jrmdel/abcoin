@@ -1,9 +1,9 @@
-import { dbConnector } from "../connector.js";
+import { dbConnector } from '../connector.js';
 
 export class ReportSubscriptionRepository {
   constructor() {
     const db = dbConnector.getDb();
-    this.collection = db.collection("report_subscriptions");
+    this.collection = db.collection('report_subscriptions');
   }
 
   getSubscriptions() {
