@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, GatewayIntentBits } from 'discord.js';
 
 class DiscordClient {
   readyPromise;
@@ -14,7 +14,7 @@ class DiscordClient {
       ],
     });
     if (!token || !channelId) {
-      throw new Error("Discord token or channel ID is not set in environment variables");
+      throw new Error('Discord token or channel ID is not set in environment variables');
     }
     this.token = token;
     this.channelId = channelId;
@@ -28,7 +28,7 @@ class DiscordClient {
     }
 
     this.readyPromise = new Promise((resolve) => {
-      this.client.once("clientReady", async () => {
+      this.client.once('clientReady', async () => {
         console.log(`✅ Discord bot logged in as ${this.client.user?.tag}`);
         resolve();
       });
@@ -44,7 +44,7 @@ class DiscordClient {
       const channel = await this.client.channels.fetch(this.channelId);
       await channel.send({ content });
     } catch (error) {
-      console.error("❌ Failed to send Discord notification:", error);
+      console.error('❌ Failed to send Discord notification:', error);
     }
   }
 }

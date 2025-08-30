@@ -1,8 +1,8 @@
-import { formatChangeResults, formatReportMessage } from "../functions/formatter.tools.js";
-import { discordClient } from "../lib/discord-client.js";
+import { formatChangeResults, formatReportMessage } from '../functions/formatter.tools.js';
+import { discordClient } from '../lib/discord-client.js';
 
 export function sendDeploymentNotification() {
-  const message = "🚀 Bot has been deployed and is now running!";
+  const message = '🚀 Bot has been deployed and is now running!';
   return discordClient.sendNotification(message);
 }
 

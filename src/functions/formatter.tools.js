@@ -1,4 +1,4 @@
-const REPORT_HEADER = "📊 **Crypto Report** 📊\n";
+const REPORT_HEADER = '📊 **Crypto Report** 📊\n';
 
 export function formatReportMessage(listings) {
   if (listings.length === 0) {
@@ -12,14 +12,14 @@ export function formatReportMessage(listings) {
 
     const line = [
       `**🪙 ${listing.symbol}** - $${formatPrice(listing.price)}`,
-      `- 24h Change: ${dailyChange}% ${dailyChange >= 0 ? "🟢" : "🔴"}`,
-      `- 7d Change: ${weeklyChange}% ${weeklyChange >= 0 ? "🟢" : "🔴"}\n`,
+      `- 24h Change: ${dailyChange}% ${dailyChange >= 0 ? '🟢' : '🔴'}`,
+      `- 7d Change: ${weeklyChange}% ${weeklyChange >= 0 ? '🟢' : '🔴'}\n`,
     ];
-    lines.push(line.join("\n"));
+    lines.push(line.join('\n'));
   });
 
   lines.unshift(REPORT_HEADER);
-  return lines.join("\n");
+  return lines.join('\n');
 }
 
 function formatPrice(price) {
@@ -27,7 +27,7 @@ function formatPrice(price) {
     // Rounding for large prices and add a space as thousand separator
     return Math.round(price)
       .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   } else if (price > 0) {
     return price.toFixed(2);
   } else if (price < 0.001) {
@@ -52,16 +52,16 @@ export function formatChangeResults(results) {
     const lines = changes
       .map((change) => {
         const oldPrice = formatPrice(change.oldPrice);
-        const variation = price > oldPrice ? "📈" : "📉";
+        const variation = price > oldPrice ? '📈' : '📉';
         const percentage = (((price - oldPrice) / oldPrice) * 100).toFixed(2);
         return `- ${change.hourPeriod}h: ${percentage}% ${variation} (old price $${oldPrice})`;
       })
-      .join("\n");
+      .join('\n');
     return `**${symbol}**: $${price}\n${lines}`;
   });
   if (linesList.length === 0) {
     return null;
   }
-  linesList.unshift("🚨 Significant price changes detected:\n");
-  return linesList.join("\n");
+  linesList.unshift('🚨 Significant price changes detected:\n');
+  return linesList.join('\n');
 }

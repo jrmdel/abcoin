@@ -1,14 +1,14 @@
-import { dbConnector } from "../connector.js";
+import { dbConnector } from '../connector.js';
 
 export class CoinHistoryRepository {
   constructor() {
     const db = dbConnector.getDb();
-    this.collection = db.collection("coin_history");
+    this.collection = db.collection('coin_history');
   }
 
   async saveListings(listings) {
     if (!Array.isArray(listings) || listings.length === 0) {
-      throw new Error("Listings should be a non-empty array");
+      throw new Error('Listings should be a non-empty array');
     }
 
     const operations = listings.map((listing) => ({
@@ -28,7 +28,7 @@ export class CoinHistoryRepository {
       const result = await this.collection.bulkWrite(operations);
       console.log(`Inserted ${result.insertedCount} documents.`);
     } catch (error) {
-      console.error("Error saving listings to the database:", error);
+      console.error('Error saving listings to the database:', error);
       throw error;
     }
   }
@@ -38,12 +38,12 @@ export class CoinHistoryRepository {
       const sinceDate = new Date(Date.now() - hours * 60 * 60 * 1000);
       const result = await this.collection.findOne(
         {
-          "metadata.symbol": symbol,
+          'metadata.symbol': symbol,
           date: { $gte: sinceDate },
         },
         {
           sort: { date: 1 },
-          projection: { "metadata.price": 1, _id: 0 },
+          projection: { 'metadata.price': 1, _id: 0 },
         }
       );
       return result?.metadata.price || null;
@@ -60,25 +60,25 @@ export class CoinHistoryRepository {
 
       const oneWeekAgoListings = await this.collection
         .aggregate([
-          { $match: { "metadata.symbol": { $in: symbols }, date: { $gte: new Date(oneWeekAgo) } } },
+          { $match: { 'metadata.symbol': { $in: symbols }, date: { $gte: new Date(oneWeekAgo) } } },
           { $sort: { date: 1 } },
-          { $group: { _id: "$metadata.symbol", price: { $first: "$metadata.price" } } },
+          { $group: { _id: '$metadata.symbol', price: { $first: '$metadata.price' } } },
         ])
         .toArray();
 
       const oneDayAgoListings = await this.collection
         .aggregate([
-          { $match: { "metadata.symbol": { $in: symbols }, date: { $gte: new Date(oneDayAgo) } } },
+          { $match: { 'metadata.symbol': { $in: symbols }, date: { $gte: new Date(oneDayAgo) } } },
           { $sort: { date: 1 } },
-          { $group: { _id: "$metadata.symbol", price: { $first: "$metadata.price" } } },
+          { $group: { _id: '$metadata.symbol', price: { $first: '$metadata.price' } } },
         ])
         .toArray();
 
       const lastListings = await this.collection
         .aggregate([
-          { $match: { "metadata.symbol": { $in: symbols }, date: { $gte: new Date(oneDayAgo) } } },
+          { $match: { 'metadata.symbol': { $in: symbols }, date: { $gte: new Date(oneDayAgo) } } },
           { $sort: { date: -1 } },
-          { $group: { _id: "$metadata.symbol", price: { $first: "$metadata.price" } } },
+          { $group: { _id: '$metadata.symbol', price: { $first: '$metadata.price' } } },
         ])
         .toArray();
 
@@ -104,7 +104,7 @@ export class CoinHistoryRepository {
         .map(([symbol, data]) => ({ symbol, ...data }))
         .sort((a, b) => a.symbol.localeCompare(b.symbol));
     } catch (error) {
-      console.error("Error retrieving the last listings:", error);
+      console.error('Error retrieving the last listings:', error);
       throw error;
     }
   }
@@ -112,13 +112,13 @@ export class CoinHistoryRepository {
   async getNPreviousListingsMeanPrice(n, symbol) {
     try {
       const pipeline = [
-        { $match: { "metadata.symbol": symbol } },
+        { $match: { 'metadata.symbol': symbol } },
         { $sort: { date: -1 } },
         { $limit: n },
         {
           $group: {
-            _id: "$metadata.symbol",
-            averagePrice: { $avg: "$metadata.price" },
+            _id: '$metadata.symbol',
+            averagePrice: { $avg: '$metadata.price' },
           },
         },
       ];

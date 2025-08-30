@@ -1,5 +1,5 @@
 export function extractAmountFromListing(listing) {
-  const priceDetails = listing.quote?.["USD"];
+  const priceDetails = listing.quote?.['USD'];
 
   return {
     symbol: listing.symbol,
