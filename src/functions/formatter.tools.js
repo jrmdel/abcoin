@@ -22,6 +22,13 @@ export function formatReportMessage(listings) {
   return lines.join('\n');
 }
 
+function formatTimePeriod(hours) {
+  if (hours % 24 === 0) {
+    return `${hours / 24}d`;
+  }
+  return `${hours}h`;
+}
+
 function formatPrice(price) {
   if (price >= 1000) {
     // Rounding for large prices and add a space as thousand separator
@@ -38,7 +45,9 @@ function formatPrice(price) {
 
 export function formatChangeResults(results) {
   const groupedBySymbol = results
-    .sort((a, b) => a.symbol.localeCompare(b.symbol) || a.hourPeriod - b.hourPeriod)
+    .sort(
+      (a, b) => a.symbol.localeCompare(b.symbol) || a.hourPeriod - b.hourPeriod
+    )
     .reduce((acc, { symbol, price, ...rest }) => {
       if (!acc[symbol]) {
         acc[symbol] = { changes: [] };
@@ -48,17 +57,21 @@ export function formatChangeResults(results) {
       return acc;
     }, {});
 
-  const linesList = Object.entries(groupedBySymbol).map(([symbol, { price, changes }]) => {
-    const lines = changes
-      .map((change) => {
-        const oldPrice = formatPrice(change.oldPrice);
-        const variation = price > oldPrice ? '📈' : '📉';
-        const percentage = (((price - oldPrice) / oldPrice) * 100).toFixed(2);
-        return `- ${change.hourPeriod}h: ${percentage}% ${variation} (old price $${oldPrice})`;
-      })
-      .join('\n');
-    return `**${symbol}**: $${price}\n${lines}`;
-  });
+  const linesList = Object.entries(groupedBySymbol).map(
+    ([symbol, { price, changes }]) => {
+      const lines = changes
+        .map((change) => {
+          const oldPrice = formatPrice(change.oldPrice);
+          const variation = price > oldPrice ? '📈' : '📉';
+          const percentage = (((price - oldPrice) / oldPrice) * 100).toFixed(2);
+          return `- ${formatTimePeriod(
+            change.hourPeriod
+          )}: ${percentage}% ${variation} (old price $${oldPrice})`;
+        })
+        .join('\n');
+      return `**${symbol}**: $${price}\n${lines}`;
+    }
+  );
   if (linesList.length === 0) {
     return null;
   }
