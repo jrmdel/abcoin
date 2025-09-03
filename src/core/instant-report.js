@@ -9,7 +9,7 @@ export async function generateReport() {
   const subscriptions = await repository.getSubscriptions();
   for (const sub of subscriptions) {
     const symbols = sub.symbols || [];
-    const listings = await historyRepository.getLastListings(symbols);
+    const listings = await historyRepository.getDifferences(symbols);
     sendReportNotificationIfNeeded(listings);
   }
   console.log('Report generated.');

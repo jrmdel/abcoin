@@ -4,6 +4,7 @@ import { schedule } from 'node-cron';
 import { generateReport } from './core/instant-report.js';
 import { generateLiveAlert } from './core/check-changes.js';
 import { sendDeploymentNotification } from './core/notifications.js';
+import { saveToHistory } from './core/archive.js';
 
 async function startDb() {
   try {
@@ -13,14 +14,18 @@ async function startDb() {
   }
 }
 
+// Schedule history to run every 10 minutes
+schedule('*/10 * * * *', () => {
+  saveToHistory().catch((error) => {
+    console.error('An error occurred while saving to history:', error);
+  });
+});
+
 // Schedule the job to run every hour at minute 0
 schedule('0 * * * *', () => {
   console.log('Running scheduled job at', new Date().toISOString());
   generateLiveAlert().catch((error) => {
-    console.error(
-      'An error occurred while checking for significant changes:',
-      error
-    );
+    console.error('An error occurred while checking for significant changes:', error);
   });
 });
 
@@ -36,10 +41,6 @@ schedule('0 12 * * 1', async () => {
 
 startDb().then(() => {
   sendDeploymentNotification().catch((error) => {
-    console.error(
-      'An error occurred while sending deployment notification:',
-      error
-    );
+    console.error('An error occurred while sending deployment notification:', error);
   });
-  generateReport().catch((error) => console.error('error', error));
 });

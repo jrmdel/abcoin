@@ -1,6 +1,5 @@
 import { CoinHistoryRepository } from '../db/repositories/coin-history.repository.js';
-import { extractAmountFromListing, isSignificantChange } from '../functions/crypto.tools.js';
-import { CmcProviderService } from '../providers/cmc-provider.service.js';
+import { isSignificantChange } from '../functions/crypto.tools.js';
 import { sendLiveAlertNotificationIfNeeded } from './notifications.js';
 
 const FOLLOWED_SYMBOLS = ['ADA', 'AVAX', 'BNB', 'BTC', 'ETH', 'SOL', 'XTZ'];
@@ -39,12 +38,8 @@ async function checkSignificantChangesOnGivenPeriod(listings, repository, { hour
 
 export async function generateLiveAlert() {
   const repository = new CoinHistoryRepository();
-  const cmcProvider = new CmcProviderService();
 
-  const rawListings = await cmcProvider.getCryptocurrencyListings();
-  const listings = rawListings
-    .map((listing) => extractAmountFromListing(listing))
-    .filter((listing) => FOLLOWED_SYMBOLS.includes(listing.symbol));
+  const listings = await repository.getLastListings(FOLLOWED_SYMBOLS);
 
   const results = await checkSignificantChanges(listings, repository);
   sendLiveAlertNotificationIfNeeded(results);
