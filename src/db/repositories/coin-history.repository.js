@@ -53,7 +53,7 @@ export class CoinHistoryRepository {
     }
   }
 
-  async getLastListings(symbols) {
+  async getDifferences(symbols) {
     try {
       const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
       const oneDayAgo = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString();
@@ -74,13 +74,7 @@ export class CoinHistoryRepository {
         ])
         .toArray();
 
-      const lastListings = await this.collection
-        .aggregate([
-          { $match: { 'metadata.symbol': { $in: symbols }, date: { $gte: new Date(oneDayAgo) } } },
-          { $sort: { date: -1 } },
-          { $group: { _id: '$metadata.symbol', price: { $first: '$metadata.price' } } },
-        ])
-        .toArray();
+      const lastListings = await this.getLastListings(symbols);
 
       const listingsMap = {};
       lastListings.forEach((listing) => {
@@ -88,15 +82,13 @@ export class CoinHistoryRepository {
       });
       oneDayAgoListings.forEach((listing) => {
         if (listingsMap[listing._id]) {
-          const percentChange24h =
-            ((listingsMap[listing._id].price - listing.price) / listing.price) * 100;
+          const percentChange24h = ((listingsMap[listing._id].price - listing.price) / listing.price) * 100;
           listingsMap[listing._id].percentChange24h = percentChange24h;
         }
       });
       oneWeekAgoListings.forEach((listing) => {
         if (listingsMap[listing._id]) {
-          const percentChange7d =
-            ((listingsMap[listing._id].price - listing.price) / listing.price) * 100;
+          const percentChange7d = ((listingsMap[listing._id].price - listing.price) / listing.price) * 100;
           listingsMap[listing._id].percentChange7d = percentChange7d;
         }
       });
@@ -107,6 +99,17 @@ export class CoinHistoryRepository {
       console.error('Error retrieving the last listings:', error);
       throw error;
     }
+  }
+
+  async getLastListings(symbols) {
+    const oneHourAgo = new Date(Date.now() - 3600000);
+    return this.collection
+      .aggregate([
+        { $match: { 'metadata.symbol': { $in: symbols }, date: { $gte: oneHourAgo } } },
+        { $sort: { date: -1 } },
+        { $group: { _id: '$metadata.symbol', price: { $first: '$metadata.price' } } },
+      ])
+      .toArray();
   }
 
   async getNPreviousListingsMeanPrice(n, symbol) {
