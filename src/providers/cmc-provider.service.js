@@ -23,7 +23,7 @@ export class CmcProviderService {
         {
           params: {
             start: 1,
-            limit: 100,
+            limit: 200,
           },
         }
       );
