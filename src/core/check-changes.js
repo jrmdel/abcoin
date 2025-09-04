@@ -21,16 +21,16 @@ async function checkSignificantChanges(listings, repository) {
 async function checkSignificantChangesOnGivenPeriod(listings, repository, { hours, percentage }) {
   const results = [];
   for (const listing of listings) {
-    const oldPrice = await repository.getHistoricalPrice(listing.symbol, hours);
+    const oldPrice = await repository.getHistoricalPrice(listing._id, hours);
     if (oldPrice === null) {
       continue;
     }
     const isSignificant = isSignificantChange(oldPrice, listing.price, percentage);
     if (isSignificant) {
       console.log(
-        `Significant change detected for ${listing.symbol}: from ${oldPrice} (${hours}h ago) to ${listing.price}`
+        `Significant change detected for ${listing._id}: from ${oldPrice} (${hours}h ago) to ${listing.price}`
       );
-      results.push({ symbol: listing.symbol, price: listing.price, oldPrice, hourPeriod: hours });
+      results.push({ symbol: listing._id, price: listing.price, oldPrice, hourPeriod: hours });
     }
   }
   return results;
@@ -43,5 +43,4 @@ export async function generateLiveAlert() {
 
   const results = await checkSignificantChanges(listings, repository);
   sendLiveAlertNotificationIfNeeded(results);
-  await repository.saveListings(listings);
 }
