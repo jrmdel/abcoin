@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "22"
+          node-version: '22'
 
       - name: Install dependencies
         run: npm install
@@ -32,6 +32,8 @@ jobs:
           chmod 600 private_key.pem
           ls
           scp -i private_key.pem -o StrictHostKeyChecking=no ./package*.json $VPS_USER@$VPS_HOST:~/abcoin
+          scp -i private_key.pem -o StrictHostKeyChecking=no ./nest-cli.json $VPS_USER@$VPS_HOST:~/abcoin
+          scp -i private_key.pem -o StrictHostKeyChecking=no ./tsconfig* $VPS_USER@$VPS_HOST:~/abcoin
           scp -i private_key.pem -o StrictHostKeyChecking=no ./Dockerfile $VPS_USER@$VPS_HOST:~/abcoin
           scp -i private_key.pem -o StrictHostKeyChecking=no ./docker-compose.yml $VPS_USER@$VPS_HOST:~/abcoin
           scp -i private_key.pem -o StrictHostKeyChecking=no -r src $VPS_USER@$VPS_HOST:~/abcoin
