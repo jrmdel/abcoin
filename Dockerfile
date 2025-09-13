@@ -25,6 +25,8 @@ RUN npm ci --omit=dev
 # Copy built code from builder
 COPY --from=builder /app/dist ./dist
 
+COPY .env .env
+
 EXPOSE 3000
 ENV NODE_ENV=production
 
