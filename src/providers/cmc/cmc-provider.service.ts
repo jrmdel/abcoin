@@ -9,7 +9,7 @@ export class CmcProviderService {
 
   public async getCryptocurrencyListings(): Promise<ICmcListing[]> {
     try {
-      const params = { start: 1, limit: 20 };
+      const params = { start: 1, limit: 200 };
       const response = await lastValueFrom(
         this.httpClient.get<ICmcListingResponse>('/cryptocurrency/listings/latest', { params }),
       );
