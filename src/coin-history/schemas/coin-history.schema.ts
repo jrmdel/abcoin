@@ -15,7 +15,7 @@ class Metadata implements ICoinHistoryMetadataDocument {
 
 @Schema({
   timestamps: false,
-  collection: 'coin-history',
+  collection: 'coin_history',
   timeseries: { timeField: 'date', metaField: 'metadata', granularity: 'hours' },
   versionKey: false,
 })
