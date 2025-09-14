@@ -7,7 +7,7 @@ import { ICmcListing, ICmcListingResponse } from 'src/providers/cmc/cmc-provider
 export class CmcProviderService {
   constructor(private readonly httpClient: HttpService) {}
 
-  async getCryptocurrencyListings(): Promise<ICmcListing[]> {
+  public async getCryptocurrencyListings(): Promise<ICmcListing[]> {
     try {
       const params = { start: 1, limit: 20 };
       const response = await lastValueFrom(

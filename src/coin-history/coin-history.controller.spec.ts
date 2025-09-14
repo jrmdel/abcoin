@@ -17,9 +17,7 @@ describe('CoinHistoryController', () => {
       ],
     }).compile();
 
-    coinHistoryController = app.get<CoinHistoryController>(
-      CoinHistoryController,
-    );
+    coinHistoryController = app.get<CoinHistoryController>(CoinHistoryController);
   });
 
   describe('findHistory', () => {

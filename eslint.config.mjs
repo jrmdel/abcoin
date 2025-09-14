@@ -30,4 +30,17 @@ export default tseslint.config(
       '@typescript-eslint/explicit-function-return-type': 'error',
     },
   },
+  {
+    // Apply rules to all ts files except *.schema.ts
+    files: ['!**/*.schema.ts'],
+    rules: {
+      '@typescript-eslint/explicit-member-accessibility': [
+        'error',
+        {
+          accessibility: 'explicit',
+          overrides: { constructors: 'no-public' },
+        },
+      ],
+    },
+  },
 );

@@ -19,7 +19,7 @@ export class TasksService {
   }
 
   @Cron('*/10 * * * *')
-  saveToHistory(): void {
+  public saveToHistory(): void {
     this.coinHistoryService.saveCurrentListings().catch((err) => {
       console.error('Error saving current listings:', err);
     });

@@ -10,15 +10,15 @@ export class DiscordService implements OnModuleInit, INotificationProvider {
   private channelId: string | undefined;
   private readyPromise: Promise<void>;
 
-  constructor(readonly configService: ConfigService) {
-    this.token = configService.get<string>('DISCORD_TOKEN');
-    this.channelId = configService.get<string>('DISCORD_CHANNEL_ID');
+  constructor(private readonly configService: ConfigService) {
+    this.token = this.configService.get<string>('DISCORD_TOKEN');
+    this.channelId = this.configService.get<string>('DISCORD_CHANNEL_ID');
     this.client = new Client({
       intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
     });
   }
 
-  async onModuleInit(): Promise<void> {
+  public async onModuleInit(): Promise<void> {
     await this.initClient();
   }
 
@@ -39,7 +39,7 @@ export class DiscordService implements OnModuleInit, INotificationProvider {
 
     return this.readyPromise;
   }
-  async sendNotification(content: string): Promise<void> {
+  public async sendNotification(content: string): Promise<void> {
     try {
       await this.initClient();
       if (!this.channelId) {

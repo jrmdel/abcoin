@@ -7,7 +7,7 @@ import { ReportSubscription } from 'src/report-subscription/schemas/report-subsc
 export class ReportSubscriptionRepository {
   constructor(@InjectModel(ReportSubscription.name) private readonly model: Model<ReportSubscription>) {}
 
-  getSubscriptions(): Promise<{ symbols: string[] }[]> {
+  public getSubscriptions(): Promise<{ symbols: string[] }[]> {
     return this.model.find({}).skip(0).limit(100).lean().exec();
   }
 }
