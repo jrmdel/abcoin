@@ -13,7 +13,7 @@ import { CoinHistory } from 'src/coin-history/schemas/coin-history.schema';
 export class CoinHistoryRepository {
   constructor(@InjectModel(CoinHistory.name) private readonly model: Model<CoinHistory>) {}
 
-  async saveListings(listings: ICoinListing[]): Promise<void> {
+  public async saveListings(listings: ICoinListing[]): Promise<void> {
     if (!Array.isArray(listings) || listings.length === 0) {
       throw new Error('Listings should be a non-empty array');
     }
@@ -39,7 +39,7 @@ export class CoinHistoryRepository {
     }
   }
 
-  async getHistoricalPrice(symbol: string, hours: number): Promise<number | null> {
+  public async getHistoricalPrice(symbol: string, hours: number): Promise<number | null> {
     try {
       const sinceDate = new Date(Date.now() - hours * 60 * 60 * 1000);
       const result = await this.model
@@ -54,7 +54,7 @@ export class CoinHistoryRepository {
     }
   }
 
-  async getDifferences(symbols: string[]): Promise<ICoinListingChangeReport[]> {
+  public async getDifferences(symbols: string[]): Promise<ICoinListingChangeReport[]> {
     try {
       const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
       const oneDayAgo = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString();
@@ -110,7 +110,7 @@ export class CoinHistoryRepository {
     }
   }
 
-  async getLastListings(symbols: string[]): Promise<IAggregatedCoinLastListing[]> {
+  public async getLastListings(symbols: string[]): Promise<IAggregatedCoinLastListing[]> {
     const oneHourAgo = new Date(Date.now() - 3600000);
     return await this.model.aggregate<IAggregatedCoinLastListing>([
       {
