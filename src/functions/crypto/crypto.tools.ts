@@ -11,11 +11,7 @@ export function extractAmountFromListing(listing: ICmcListing): ICoinListing {
   };
 }
 
-export function isSignificantChange(
-  oldPrice: number,
-  newPrice: number,
-  thresholdPercentage: number,
-): boolean {
+export function isSignificantChange(oldPrice: number, newPrice: number, thresholdPercentage: number): boolean {
   const change = Math.abs(newPrice - oldPrice);
   const changePercentage = (change / oldPrice) * 100;
   return changePercentage >= thresholdPercentage;
