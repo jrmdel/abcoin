@@ -25,7 +25,7 @@ export class TasksService {
     });
   }
 
-  @Cron('0 19 * * *')
+  @Cron('0 10 * * *')
   public generateReport(): void {
     console.log('Running scheduled job at', new Date().toISOString());
     this.reportSubscriptionService.generateReport().catch((err) => {

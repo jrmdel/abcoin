@@ -31,7 +31,7 @@ function formatTimePeriod(hours: number): string {
   return `${hours}h`;
 }
 
-function formatPrice(price: number): string {
+export function formatPrice(price: number): string {
   if (price >= 1000) {
     // Rounding for large prices and add a space as thousand separator
     return Math.round(price)
@@ -39,7 +39,7 @@ function formatPrice(price: number): string {
       .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   } else if (price > 10) {
     return price.toFixed(2);
-  } else if (price > 0) {
+  } else if (price > 0.1) {
     return price.toFixed(3);
   } else if (price < 0.001) {
     return price.toExponential(4);
@@ -69,7 +69,7 @@ export function formatChangeResults(results: ICoinListingChange[]): string | nul
         return `- ${formatTimePeriod(change.hourPeriod)}: ${percentage}% ${variation} (old price $${oldPrice})`;
       })
       .join('\n');
-    return `**${symbol}**: $${price}\n${lines}`;
+    return `**${symbol}**: $${formatPrice(price)}\n${lines}`;
   });
   if (linesList.length === 0) {
     return null;
