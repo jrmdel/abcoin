@@ -37,7 +37,7 @@ export interface ICoinListingChangeReport extends ICoinListingPercentageChange {
   symbol: string;
 }
 
-export interface IThresholdSettings {
+export interface IVariationSettings {
   hours: number;
   percentage: number;
 }
