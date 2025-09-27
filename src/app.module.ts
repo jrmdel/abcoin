@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AppController } from 'src/app.controller';
 import { CoinHistoryModule } from 'src/coin-history/coin-history.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { ProvidersModule } from 'src/providers/providers.module';
@@ -25,7 +26,7 @@ import { TasksModule } from 'src/tasks/tasks.module';
     ReportSubscriptionModule,
     TasksModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}
