@@ -25,3 +25,9 @@ export interface IThresholdReached {
   threshold: number;
   direction: ThresholdDirection;
 }
+
+export interface IFilterThreshold {
+  symbol?: string;
+  min?: number;
+  max?: number;
+}

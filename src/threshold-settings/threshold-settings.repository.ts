@@ -3,7 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { ThresholdSettings } from 'src/threshold-settings/schemas/threshold-settings.schema';
 import { AGGREGATED_THRESHOLD_PIPELINE } from 'src/threshold-settings/threshold-settings.constants';
-import { IAggregatedThreshold } from 'src/threshold-settings/threshold-settings.interface';
+import {
+  IAggregatedThreshold,
+  IFilterThreshold,
+  IThresholdSettings,
+  IThresholdSettingsDocument,
+} from 'src/threshold-settings/threshold-settings.interface';
 
 @Injectable()
 export class ThresholdSettingsRepository {
@@ -15,6 +20,20 @@ export class ThresholdSettingsRepository {
 
   public findAggregateThresholds(): Promise<IAggregatedThreshold[]> {
     return this.model.aggregate<IAggregatedThreshold>(AGGREGATED_THRESHOLD_PIPELINE).exec();
+  }
+
+  public findByQuery(query: IFilterThreshold): Promise<IThresholdSettings[]> {
+    const hasValueFilter = query.min != null || query.max != null;
+    const filter: FilterQuery<IThresholdSettingsDocument> = {
+      ...(query.symbol && { symbol: query.symbol }),
+      ...(hasValueFilter && {
+        value: {
+          ...(query.min != null && { $gte: query.min }),
+          ...(query.max != null && { $lte: query.max }),
+        },
+      }),
+    };
+    return this.model.find(filter).lean().exec();
   }
 
   public findBySymbol(symbol: string): Promise<ThresholdSettings[]> {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CoinHistoryRepository } from 'src/coin-history/coin-history.repository';
 import { computeHasThresholdReached } from 'src/functions/threshold/threshold.tools';
 import { NotificationService } from 'src/notification/notification.service';
-import { IThresholdSettings } from 'src/threshold-settings/threshold-settings.interface';
+import { IFilterThreshold, IThresholdSettings } from 'src/threshold-settings/threshold-settings.interface';
 import { ThresholdSettingsRepository } from 'src/threshold-settings/threshold-settings.repository';
 
 @Injectable()
@@ -15,6 +15,10 @@ export class ThresholdSettingsService {
 
   public create(symbol: string, value: number): Promise<IThresholdSettings> {
     return this.thresholdSettingsRepository.create(symbol, value);
+  }
+
+  public findByQuery(query: IFilterThreshold): Promise<IThresholdSettings[]> {
+    return this.thresholdSettingsRepository.findByQuery(query);
   }
 
   public deleteThreshold(id: string): Promise<void> {

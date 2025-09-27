@@ -1,6 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, Min } from 'class-validator';
-import { IThresholdSettingsDocument } from 'src/threshold-settings/threshold-settings.interface';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IFilterThreshold, IThresholdSettingsDocument } from 'src/threshold-settings/threshold-settings.interface';
 
 export class CreateThresholdDto implements IThresholdSettingsDocument {
   @ApiProperty({
@@ -21,4 +22,40 @@ export class CreateThresholdDto implements IThresholdSettingsDocument {
   @IsNumber()
   @Min(0)
   value: number;
+}
+
+export class FindThresholdDto implements IFilterThreshold {
+  @ApiPropertyOptional({
+    name: 'symbol',
+    description: 'The symbol of the coin to filter by (e.g., BTC, ETH)',
+    type: String,
+    example: 'BTC',
+  })
+  @IsString()
+  @IsOptional()
+  symbol?: string;
+
+  @ApiPropertyOptional({
+    name: 'min',
+    description: 'The minimum threshold value to filter by',
+    type: Number,
+    example: 1000,
+  })
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  @IsOptional()
+  min?: number;
+
+  @ApiPropertyOptional({
+    name: 'max',
+    description: 'The maximum threshold value to filter by',
+    type: Number,
+    example: 50000,
+  })
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  @IsOptional()
+  max?: number;
 }
