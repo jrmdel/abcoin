@@ -1,6 +1,11 @@
 import { ICoinListingChange, ICoinListingChangeReport } from 'src/coin-history/coin-history.interface';
+import { IThresholdReached, ThresholdDirection } from 'src/threshold-settings/threshold-settings.interface';
 
 const REPORT_HEADER = '📊 **Crypto Report** 📊\n';
+const DIRECTION_MAPPER: Record<ThresholdDirection, string> = {
+  DOWNWARD: '📈',
+  UPWARD: '📉',
+};
 
 export function formatReportMessage(listings: ICoinListingChangeReport[]): string | null {
   if (listings.length === 0) {
@@ -76,4 +81,17 @@ export function formatChangeResults(results: ICoinListingChange[]): string | nul
   }
   linesList.unshift('🚨 Significant price changes detected:\n');
   return linesList.join('\n');
+}
+
+export function formatThresholdMessage(results: IThresholdReached[]): string | null {
+  if (!results.length) {
+    return null;
+  }
+  const lines: string[] = [];
+  for (const result of results) {
+    const line = `**${result.symbol}**: $${formatPrice(result.threshold)} ${DIRECTION_MAPPER[result.direction]}\n`;
+    lines.push(line);
+  }
+  lines.unshift(`🎢 New threshold${lines.length > 1 ? 's' : ''} reached\n`);
+  return lines.join('\n');
 }

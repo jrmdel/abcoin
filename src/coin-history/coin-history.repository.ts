@@ -6,6 +6,7 @@ import {
   ICoinListing,
   ICoinListingPercentageChange,
   ICoinListingChangeReport,
+  IAggregatedCoinLastNListings,
 } from 'src/coin-history/coin-history.interface';
 import { CoinHistory } from 'src/coin-history/schemas/coin-history.schema';
 
@@ -121,5 +122,48 @@ export class CoinHistoryRepository {
         $group: { _id: '$metadata.symbol', price: { $first: '$metadata.price' } },
       },
     ]);
+  }
+
+  public getLastNListings(symbols: string[], n: number): Promise<IAggregatedCoinLastNListings[]> | never[] {
+    if (!symbols.length) {
+      return [];
+    }
+    return this.model
+      .aggregate<IAggregatedCoinLastNListings>([
+        // Match only the relevant symbols
+        { $match: { 'metadata.symbol': { $in: symbols } } },
+        // Sort by symbol and date in descending order
+        { $sort: { 'metadata.symbol': 1, date: -1 } },
+        // Use a facet to process each symbol independently
+        {
+          $facet: symbols.reduce((facets, symbol) => {
+            facets[symbol] = [
+              { $match: { 'metadata.symbol': symbol } },
+              { $sort: { date: -1 } },
+              { $limit: n },
+              { $project: { _id: 0, price: '$metadata.price' } },
+            ];
+            return facets;
+          }, {}),
+        },
+        // Transform the facet results into the desired output format
+        {
+          $project: {
+            results: {
+              $map: {
+                input: { $objectToArray: '$$ROOT' },
+                as: 'facet',
+                in: {
+                  _id: '$$facet.k',
+                  prices: { $map: { input: '$$facet.v', as: 'entry', in: '$$entry.price' } },
+                },
+              },
+            },
+          },
+        },
+        { $unwind: '$results' },
+        { $replaceRoot: { newRoot: '$results' } },
+      ])
+      .exec();
   }
 }

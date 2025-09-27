@@ -8,6 +8,7 @@ import { NotificationModule } from 'src/notification/notification.module';
 import { ProvidersModule } from 'src/providers/providers.module';
 import { ReportSubscriptionModule } from 'src/report-subscription/report-subscription.module';
 import { TasksModule } from 'src/tasks/tasks.module';
+import { ThresholdSettingsModule } from 'src/threshold-settings/threshold-settings.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TasksModule } from 'src/tasks/tasks.module';
     ProvidersModule,
     CoinHistoryModule,
     ReportSubscriptionModule,
+    ThresholdSettingsModule,
     TasksModule,
   ],
   controllers: [AppController],

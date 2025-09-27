@@ -20,6 +20,11 @@ export interface IAggregatedCoinLastListing {
   price: number;
 }
 
+export interface IAggregatedCoinLastNListings {
+  _id: string;
+  prices: number[];
+}
+
 export interface ICoinListingChange {
   symbol: string;
   price: number;
