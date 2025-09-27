@@ -3,8 +3,8 @@ import { IThresholdReached, ThresholdDirection } from 'src/threshold-settings/th
 
 const REPORT_HEADER = '📊 **Crypto Report** 📊\n';
 const DIRECTION_MAPPER: Record<ThresholdDirection, string> = {
-  DOWNWARD: '📈',
-  UPWARD: '📉',
+  UPWARD: '📈',
+  DOWNWARD: '📉',
 };
 
 export function formatReportMessage(listings: ICoinListingChangeReport[]): string | null {
@@ -89,7 +89,7 @@ export function formatThresholdMessage(results: IThresholdReached[]): string | n
   }
   const lines: string[] = [];
   for (const result of results) {
-    const line = `**${result.symbol}**: $${formatPrice(result.threshold)} ${DIRECTION_MAPPER[result.direction]}\n`;
+    const line = `**${result.symbol}**: $${formatPrice(result.threshold)} ${DIRECTION_MAPPER[result.direction]}`;
     lines.push(line);
   }
   lines.unshift(`🎢 New threshold${lines.length > 1 ? 's' : ''} reached\n`);
