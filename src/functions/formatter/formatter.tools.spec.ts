@@ -1,5 +1,6 @@
 import { ICoinListingChangeReport } from 'src/coin-history/coin-history.interface';
-import { formatPrice, formatReportMessage } from 'src/functions/formatter/formatter.tools';
+import { formatPrice, formatReportMessage, formatThresholdMessage } from 'src/functions/formatter/formatter.tools';
+import { thresholdReachedFixture } from 'test/fixtures/threshold.fixtures';
 
 describe('formatter tools', () => {
   describe('formatReportMessage', () => {
@@ -28,6 +29,24 @@ describe('formatter tools', () => {
       expect(result).toEqual(
         `📊 **Crypto Report** 📊\n\n**🪙 BTC** - $45 000\n- 24h Change: 2.50% 🟢\n- 7d Change: 3.10% 🟢\n\n**🪙 USDT** - $0.996\n- 24h Change: -0.10% 🔴\n- 7d Change: -0.05% 🔴\n`,
       );
+    });
+  });
+
+  describe('formatThresholdMessage', () => {
+    it('should format a single element correctly', () => {
+      const result = formatThresholdMessage([thresholdReachedFixture[0]]);
+
+      expect(result).toBe('🎢 New threshold reached\n\n**BTC**: $60 000 📈');
+    });
+
+    it('should format multiple elements correctly', () => {
+      const result = formatThresholdMessage(thresholdReachedFixture);
+
+      expect(result).toBe('🎢 New thresholds reached\n\n**BTC**: $60 000 📈\n**ETH**: $1 000 📉\n**ETH**: $1 500 📉');
+    });
+
+    it('should return null when no threshold have been reached', () => {
+      expect(formatThresholdMessage([])).toBeNull();
     });
   });
 

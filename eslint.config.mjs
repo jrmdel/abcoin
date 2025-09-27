@@ -29,6 +29,14 @@ export default tseslint.config(
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'error',
+      'require-await': 'error',
+      '@typescript-eslint/explicit-member-accessibility': [
+        'error',
+        {
+          accessibility: 'explicit',
+          overrides: { constructors: 'no-public' },
+        },
+      ],
     },
   },
   {
@@ -47,16 +55,10 @@ export default tseslint.config(
     },
   },
   {
-    // Apply rules to all ts files except *.schema.ts
-    files: ['!**/*.schema.ts'],
+    // Disable rules for *.schema.ts and *.dto.ts files
+    files: ['**/*.schema.ts', '**/*.dto.ts'],
     rules: {
-      '@typescript-eslint/explicit-member-accessibility': [
-        'error',
-        {
-          accessibility: 'explicit',
-          overrides: { constructors: 'no-public' },
-        },
-      ],
+      '@typescript-eslint/explicit-member-accessibility': 'off',
     },
   },
 );

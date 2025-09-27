@@ -2,11 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AppController } from 'src/app.controller';
 import { CoinHistoryModule } from 'src/coin-history/coin-history.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { ProvidersModule } from 'src/providers/providers.module';
 import { ReportSubscriptionModule } from 'src/report-subscription/report-subscription.module';
 import { TasksModule } from 'src/tasks/tasks.module';
+import { ThresholdSettingsModule } from 'src/threshold-settings/threshold-settings.module';
 
 @Module({
   imports: [
@@ -23,9 +25,10 @@ import { TasksModule } from 'src/tasks/tasks.module';
     ProvidersModule,
     CoinHistoryModule,
     ReportSubscriptionModule,
+    ThresholdSettingsModule,
     TasksModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}

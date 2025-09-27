@@ -20,6 +20,11 @@ export interface IAggregatedCoinLastListing {
   price: number;
 }
 
+export interface IAggregatedCoinLastNListings {
+  _id: string;
+  prices: number[];
+}
+
 export interface ICoinListingChange {
   symbol: string;
   price: number;
@@ -37,7 +42,7 @@ export interface ICoinListingChangeReport extends ICoinListingPercentageChange {
   symbol: string;
 }
 
-export interface IThresholdSettings {
+export interface IVariationSettings {
   hours: number;
   percentage: number;
 }

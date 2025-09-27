@@ -1,4 +1,4 @@
-import { ICoinListing } from 'src/coin-history/coin-history.interface';
+import { IAggregatedCoinLastNListings, ICoinListing } from 'src/coin-history/coin-history.interface';
 
 export const coinListingBtcFixture: ICoinListing = {
   price: 50000,
@@ -11,3 +11,8 @@ export const coinListingEthFixture: ICoinListing = {
   symbol: 'ETH',
   updatedAt: '2023-01-01T00:00:00.000Z',
 };
+
+export const aggregatedCoinLastTwoListings: IAggregatedCoinLastNListings[] = [
+  { _id: 'BTC', prices: [59000, 60000] },
+  { _id: 'ETH', prices: [1600, 900] },
+];

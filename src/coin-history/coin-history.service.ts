@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { FOLLOWED_SYMBOLS, THRESHOLD_SETTINGS } from 'src/coin-history/coin-history.constants';
+import { FOLLOWED_SYMBOLS, VARIATION_SETTINGS } from 'src/coin-history/coin-history.constants';
 import {
   IAggregatedCoinLastListing,
   ICoinListingChange,
-  IThresholdSettings,
+  IVariationSettings,
 } from 'src/coin-history/coin-history.interface';
 import { CoinHistoryRepository } from 'src/coin-history/coin-history.repository';
 import { extractAmountFromListing, isSignificantChange } from 'src/functions/crypto/crypto.tools';
@@ -36,7 +36,7 @@ export class CoinHistoryService {
 
   private async checkSignificantChanges(listings: IAggregatedCoinLastListing[]): Promise<ICoinListingChange[]> {
     const results: ICoinListingChange[] = [];
-    for (const settings of THRESHOLD_SETTINGS) {
+    for (const settings of VARIATION_SETTINGS) {
       const result = await this.checkSignificantChangesOnGivenPeriod(listings, settings);
       results.push(...result);
     }
@@ -45,7 +45,7 @@ export class CoinHistoryService {
 
   private async checkSignificantChangesOnGivenPeriod(
     listings: IAggregatedCoinLastListing[],
-    { hours, percentage }: IThresholdSettings,
+    { hours, percentage }: IVariationSettings,
   ): Promise<ICoinListingChange[]> {
     const results: ICoinListingChange[] = [];
     for (const listing of listings) {
