@@ -1,3 +1,4 @@
+import { of } from 'rxjs';
 import { ICmcListing } from 'src/providers/cmc/cmc-provider.interface';
 
 const cmcListingFixture: ICmcListing = {
@@ -31,3 +32,21 @@ const cmcListingEthFixture: ICmcListing = {
 };
 
 export const cmcListingsFixture: ICmcListing[] = [cmcListingFixture, cmcListingEthFixture];
+
+export const cmcListingsApiResponseFixture = of({
+  status: 200,
+  statusText: '',
+  headers: {},
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  config: {} as any,
+  data: {
+    status: {
+      timestamp: '2018-06-02T22:51:28.209Z',
+      error_code: 0,
+      error_message: '',
+      elapsed: 10,
+      credit_count: 1,
+    },
+    data: structuredClone(cmcListingsFixture),
+  },
+});
