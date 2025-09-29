@@ -6,11 +6,11 @@ services:
     labels:
       - 'traefik.enable=true'
 
-      - 'traefik.http.routers.html-to-pdf.rule=Host(`${ABCOIN_HOST_PUBLIC_URL}`) && PathPrefix(`/abcoin`)'
-      - 'traefik.http.routers.html-to-pdf.entrypoints=websecure'
-      - 'traefik.http.routers.html-to-pdf.tls=true'
-      - 'traefik.http.routers.html-to-pdf.tls.certresolver=le'
-      - 'traefik.http.routers.html-to-pdf.middlewares=strip-abcoin'
+      - 'traefik.http.routers.abcoin.rule=Host(`${ABCOIN_HOST_PUBLIC_URL}`) && PathPrefix(`/abcoin`)'
+      - 'traefik.http.routers.abcoin.entrypoints=websecure'
+      - 'traefik.http.routers.abcoin.tls=true'
+      - 'traefik.http.routers.abcoin.tls.certresolver=le'
+      - 'traefik.http.routers.abcoin.middlewares=strip-abcoin'
       - 'traefik.http.middlewares.strip-abcoin.stripPrefix.prefixes=/abcoin'
     networks:
       - shared_network
