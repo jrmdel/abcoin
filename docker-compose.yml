@@ -3,6 +3,15 @@ services:
     image: dj/abcoin:${ABCOIN_TAG}
     container_name: abcoin
     restart: always
+    labels:
+      - 'traefik.enable=true'
+
+      - 'traefik.http.routers.html-to-pdf.rule=Host(`${ABCOIN_HOST_PUBLIC_URL}`) && PathPrefix(`/abcoin`)'
+      - 'traefik.http.routers.html-to-pdf.entrypoints=websecure'
+      - 'traefik.http.routers.html-to-pdf.tls=true'
+      - 'traefik.http.routers.html-to-pdf.tls.certresolver=le'
+      - 'traefik.http.routers.html-to-pdf.middlewares=strip-abcoin'
+      - 'traefik.http.middlewares.strip-abcoin.stripPrefix.prefixes=/abcoin'
     networks:
       - shared_network
 

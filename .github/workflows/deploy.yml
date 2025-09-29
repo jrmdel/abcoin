@@ -53,6 +53,7 @@ jobs:
 
             # Export environment variables used in docker-compose.yml
             export ABCOIN_TAG=$VERSION
+            export ABCOIN_HOST_PUBLIC_URL='${{ vars.HOST_PUBLIC_URL }}'
 
             docker compose up -d
             
