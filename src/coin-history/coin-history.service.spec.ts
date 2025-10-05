@@ -60,8 +60,9 @@ describe('CoinHistoryService', () => {
       jest.spyOn(cmcProviderService, 'getCryptocurrencyListings').mockResolvedValueOnce(cmcListingsFixture);
       extractAmountMock.mockReturnValueOnce(coinListingBtcFixture).mockReturnValueOnce(coinListingEthFixture);
 
-      await coinHistoryService.saveCurrentListings();
+      const result = await coinHistoryService.saveCurrentListings();
 
+      expect(result).toEqual([coinListingBtcFixture, coinListingEthFixture]);
       expect(extractAmountFromListing).toHaveBeenCalledTimes(2);
       expect(coinHistoryRepository.saveListings).toHaveBeenCalledWith([coinListingBtcFixture, coinListingEthFixture]);
     });
