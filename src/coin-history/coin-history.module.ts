@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CustomCacheModule } from 'src/cache/cache.module';
 import { CoinHistoryController } from 'src/coin-history/coin-history.controller';
 import { CoinHistoryRepository } from 'src/coin-history/coin-history.repository';
 import { CoinHistoryService } from 'src/coin-history/coin-history.service';
@@ -12,6 +13,7 @@ import { ProvidersModule } from 'src/providers/providers.module';
     MongooseModule.forFeature([{ name: CoinHistory.name, schema: CoinHistorySchema }]),
     ProvidersModule,
     NotificationModule,
+    CustomCacheModule,
   ],
   controllers: [CoinHistoryController],
   providers: [CoinHistoryRepository, CoinHistoryService],

@@ -7,6 +7,7 @@ import { CmcProviderService } from 'src/providers/cmc/cmc-provider.service';
 import { extractAmountFromListing } from 'src/functions/crypto/crypto.tools';
 import { cmcListingsFixture } from 'test/fixtures/providers.fixtures';
 import { coinListingBtcFixture, coinListingEthFixture } from 'test/fixtures/coin.fixtures';
+import { CacheService } from 'src/cache/cache.service';
 
 jest.mock('src/functions/crypto/crypto.tools');
 const extractAmountMock = extractAmountFromListing as jest.MockedFunction<typeof extractAmountFromListing>;
@@ -32,6 +33,10 @@ describe('CoinHistoryService', () => {
         {
           provide: NotificationService,
           useValue: createMock<NotificationService>(),
+        },
+        {
+          provide: CacheService,
+          useValue: createMock<CacheService>(),
         },
       ],
     }).compile();

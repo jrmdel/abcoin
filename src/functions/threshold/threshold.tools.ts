@@ -13,7 +13,7 @@ export function computeHasThresholdReached(
   const result: IThresholdReached[] = [];
   for (const { symbol, values } of thresholdList) {
     const lastPrices = history.find((h) => h._id === symbol)?.prices;
-    if (!lastPrices) {
+    if (!lastPrices || !hasValidPrices(lastPrices)) {
       continue;
     }
     const thresholdsReached = valuesInRange(values, lastPrices);
@@ -21,6 +21,10 @@ export function computeHasThresholdReached(
     result.push(...thresholdsReached.map((v) => buildThresholdReachedObject(symbol, v, direction)));
   }
   return result;
+}
+
+function hasValidPrices(prices: (number | undefined)[]): prices is number[] {
+  return prices.every((price) => typeof price === 'number');
 }
 
 export function valuesInRange(values: number[], range: number[]): number[] {

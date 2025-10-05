@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CustomCacheModule } from 'src/cache/cache.module';
 import { CoinHistoryModule } from 'src/coin-history/coin-history.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { ThresholdSettings, ThresholdSettingsSchema } from 'src/threshold-settings/schemas/threshold-settings.schema';
@@ -12,6 +13,7 @@ import { ThresholdSettingsService } from 'src/threshold-settings/threshold-setti
     MongooseModule.forFeature([{ name: ThresholdSettings.name, schema: ThresholdSettingsSchema }]),
     NotificationModule,
     CoinHistoryModule,
+    CustomCacheModule,
   ],
   controllers: [ThresholdSettingsController],
   providers: [ThresholdSettingsService, ThresholdSettingsRepository],
