@@ -50,8 +50,11 @@ export class ThresholdSettingsService {
     const result: IAggregatedCoinLastNListings[] = [];
     for (const symbol of symbols) {
       const lastPrice = await this.cacheService.get(symbol);
-      const currentPrice = currentListings.find((listing) => listing.symbol === symbol)?.price;
-      const prices = [lastPrice, currentPrice];
+      const listing = currentListings.find((listing) => listing.symbol === symbol);
+      if (!listing) {
+        continue;
+      }
+      const prices = [lastPrice, listing.price];
       result.push({ _id: symbol, prices });
     }
     return result;
