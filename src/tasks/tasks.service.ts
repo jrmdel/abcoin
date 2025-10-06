@@ -23,8 +23,9 @@ export class TasksService {
   @Cron('*/10 * * * *')
   public async saveToHistory(): Promise<void> {
     try {
-      await this.coinHistoryService.saveCurrentListings();
-      await this.thresholdSettingsService.checkIfThresholdsHaveBeenReached();
+      const listings = await this.coinHistoryService.saveCurrentListings();
+      await this.thresholdSettingsService.checkIfThresholdsHaveBeenReached(listings);
+      await this.coinHistoryService.cacheListings(listings);
     } catch (error) {
       console.error('Error saving current listings:', error);
     }

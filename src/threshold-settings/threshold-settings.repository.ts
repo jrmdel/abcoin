@@ -14,7 +14,7 @@ import {
 export class ThresholdSettingsRepository {
   constructor(@InjectModel(ThresholdSettings.name) private readonly model: Model<ThresholdSettings>) {}
 
-  public create(symbol: string, value: number): Promise<ThresholdSettings> {
+  public create(symbol: string, value: number): Promise<IThresholdSettings> {
     return this.model.create({ symbol, value });
   }
 

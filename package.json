@@ -1,6 +1,6 @@
 {
   "name": "alerting-bot-coin",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "description": "",
   "author": "",
   "private": true,
@@ -21,7 +21,9 @@
   },
   "dependencies": {
     "@golevelup/ts-jest": "^0.7.0",
+    "@keyv/redis": "^5.1.2",
     "@nestjs/axios": "^4.0.1",
+    "@nestjs/cache-manager": "^3.0.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -29,6 +31,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^6.0.0",
     "@nestjs/swagger": "^11.2.0",
+    "cache-manager": "^7.2.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "discord.js": "^14.22.1",
@@ -82,6 +85,17 @@
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
+    ],
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "test/fixtures",
+      "src/main\\.ts",
+      "src/.*\\.module\\.ts",
+      "src/.*\\.dto\\.ts",
+      "src/.*\\.enum\\.ts",
+      "src/.*\\.interface.?\\.ts",
+      "src/.*\\.constant.?\\.ts",
+      "src/.*\\.schema\\.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"

@@ -22,7 +22,7 @@ export interface IAggregatedCoinLastListing {
 
 export interface IAggregatedCoinLastNListings {
   _id: string;
-  prices: number[];
+  prices: (number | undefined)[];
 }
 
 export interface ICoinListingChange {

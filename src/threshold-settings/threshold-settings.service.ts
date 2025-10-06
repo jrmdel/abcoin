@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { CacheService } from 'src/cache/cache.service';
+import { IAggregatedCoinLastNListings, ICoinListing } from 'src/coin-history/coin-history.interface';
 import { CoinHistoryRepository } from 'src/coin-history/coin-history.repository';
 import { computeHasThresholdReached } from 'src/functions/threshold/threshold.tools';
 import { NotificationService } from 'src/notification/notification.service';
@@ -11,6 +13,7 @@ export class ThresholdSettingsService {
     private readonly thresholdSettingsRepository: ThresholdSettingsRepository,
     private readonly coinHistoryRepository: CoinHistoryRepository,
     private readonly notificationService: NotificationService,
+    private readonly cacheService: CacheService,
   ) {}
 
   public create(symbol: string, value: number): Promise<IThresholdSettings> {
@@ -25,12 +28,35 @@ export class ThresholdSettingsService {
     return this.thresholdSettingsRepository.delete(id);
   }
 
-  public async checkIfThresholdsHaveBeenReached(): Promise<void> {
+  public async checkIfThresholdsHaveBeenReached(
+    currentListings?: ICoinListing[],
+  ): Promise<IAggregatedCoinLastNListings[]> {
     const aggregatedThresholds = await this.thresholdSettingsRepository.findAggregateThresholds();
     const symbols = aggregatedThresholds.flatMap((threshold) => threshold.symbol);
-    const pricesArray = await this.coinHistoryRepository.getLastNListings(symbols, 2);
+    const pricesArray = await this.getPriceRanges(symbols, currentListings);
 
     const thresholdsReached = computeHasThresholdReached(aggregatedThresholds, pricesArray);
     await this.notificationService.sendThresholdNotificationIfNeeded(thresholdsReached);
+    return pricesArray;
+  }
+
+  private async getPriceRanges(
+    symbols: string[],
+    currentListings?: ICoinListing[],
+  ): Promise<IAggregatedCoinLastNListings[]> {
+    if (!currentListings?.length) {
+      return this.coinHistoryRepository.getLastNListings(symbols, 2);
+    }
+    const result: IAggregatedCoinLastNListings[] = [];
+    for (const symbol of symbols) {
+      const lastPrice = await this.cacheService.get(symbol);
+      const listing = currentListings.find((listing) => listing.symbol === symbol);
+      if (!listing) {
+        continue;
+      }
+      const prices = [lastPrice, listing.price];
+      result.push({ _id: symbol, prices });
+    }
+    return result;
   }
 }
