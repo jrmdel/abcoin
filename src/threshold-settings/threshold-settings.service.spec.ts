@@ -73,6 +73,26 @@ describe('ThresholdSettingsService', () => {
     });
   });
 
+  describe('updateThreshold', () => {
+    it('should call repository.update with correct parameters and return true on success', async () => {
+      jest.spyOn(repository, 'update').mockResolvedValueOnce();
+
+      const result = await service.updateThreshold('threshold-id-123', 65000);
+
+      expect(repository.update).toHaveBeenCalledWith('threshold-id-123', 65000);
+      expect(result).toBe(true);
+    });
+
+    it('should return false if repository.update throws an error', async () => {
+      jest.spyOn(repository, 'update').mockRejectedValueOnce(new Error('Update failed'));
+
+      const result = await service.updateThreshold('threshold-id-123', 65000);
+
+      expect(repository.update).toHaveBeenCalledWith('threshold-id-123', 65000);
+      expect(result).toBe(false);
+    });
+  });
+
   describe('deleteThreshold', () => {
     it('should call repository.delete with correct id', async () => {
       jest.spyOn(repository, 'delete').mockResolvedValueOnce();
@@ -106,7 +126,8 @@ describe('ThresholdSettingsService', () => {
       expect(result).toEqual([{ _id: 'BTC', prices: [70000, 50000] }]);
       expect(repository.findAggregateThresholds).toHaveBeenCalled();
       expect(coinHistoryRepository.getLastNListings).not.toHaveBeenCalled();
-      expect(cacheService.get).toHaveBeenCalledWith('BTC');
+      expect(cacheService.get).toHaveBeenNthCalledWith(1, 'BTC');
+      expect(cacheService.get).toHaveBeenNthCalledWith(2, 'ETH');
       expect(notificationService.sendThresholdNotificationIfNeeded).toHaveBeenCalledWith([
         thresholdBtcDownwardReachedFixture,
       ]);
