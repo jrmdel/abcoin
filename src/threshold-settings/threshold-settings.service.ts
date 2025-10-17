@@ -24,6 +24,16 @@ export class ThresholdSettingsService {
     return this.thresholdSettingsRepository.findByQuery(query);
   }
 
+  public async updateThreshold(id: string, value: number): Promise<boolean> {
+    try {
+      await this.thresholdSettingsRepository.update(id, value);
+      return true;
+    } catch {
+      console.error(`Failed to update threshold with id ${id} to value ${value}`);
+      return false;
+    }
+  }
+
   public deleteThreshold(id: string): Promise<void> {
     return this.thresholdSettingsRepository.delete(id);
   }

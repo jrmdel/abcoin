@@ -59,3 +59,15 @@ export class FindThresholdDto implements IFilterThreshold {
   @IsOptional()
   max?: number;
 }
+
+export class PatchThresholdDto implements Pick<IThresholdSettingsDocument, 'value'> {
+  @ApiProperty({
+    name: 'value',
+    description: 'The new threshold value for the coin',
+    type: Number,
+    example: 45000,
+  })
+  @IsNumber()
+  @Min(0)
+  value: number;
+}
