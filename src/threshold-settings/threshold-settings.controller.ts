@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
-import { CreateThresholdDto, FindThresholdDto } from 'src/threshold-settings/threshold-settings.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { CreateThresholdDto, FindThresholdDto, PatchThresholdDto } from 'src/threshold-settings/threshold-settings.dto';
 import { IThresholdSettings } from 'src/threshold-settings/threshold-settings.interface';
 import { ThresholdSettingsService } from 'src/threshold-settings/threshold-settings.service';
 
@@ -21,5 +21,11 @@ export class ThresholdSettingsController {
   @Delete(':id')
   public deleteThreshold(@Param('id') id: string): Promise<void> {
     return this.thresholdService.deleteThreshold(id);
+  }
+
+  @Patch(':id')
+  public updateThreshold(@Param('id') id: string, @Body() body: PatchThresholdDto): Promise<boolean> {
+    const { value } = body;
+    return this.thresholdService.updateThreshold(id, value);
   }
 }
